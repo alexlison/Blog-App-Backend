@@ -148,6 +148,34 @@ app.post("/viewAll",(req,res) => {
 
 })
 
+app.post("/viewMyPost",(req,res) => {
+
+    let input = req.body 
+    let token = req.headers.token
+    
+    jwt.verify(token,"blogApp",(error,decoded) => {
+
+        if (decoded) {
+
+            postModel.find(input).then(
+                (items) => {
+
+                    res.json(items)
+                }
+            ).catch(
+                () => {
+                    res.json({"Status":"Error"})
+                } 
+            )
+
+            
+        } else {
+            res.json({"Status":"Invalid Authentication"})
+        }
+    })
+
+})
+
 
 app.listen(4000,() => {
 
