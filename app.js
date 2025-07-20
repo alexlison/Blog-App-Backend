@@ -4,6 +4,7 @@ const cors = require("cors")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const userModel = require("./models/users")
+const postModel = require("./models/posts")
 
 
 const app = express()
@@ -54,7 +55,7 @@ app.post("/signup", async (req,res) => {
 app.post("/signIn",async (req,res) => {
 
     let input = req.body
-    userModel.find({email:input.email}).then(
+    await userModel.find({email:input.email}).then(
         (result) => {
 
             if (result.length > 0) {
@@ -78,15 +79,12 @@ app.post("/signIn",async (req,res) => {
                             
                             
                         })
-
-
-                    
+    
                 } else {
 
                     res.json({"Status":"InCorrect password"})
                     
                 }
-                
                
             } else {
 
@@ -95,8 +93,32 @@ app.post("/signIn",async (req,res) => {
             }
         }
     ).catch()
+})
 
 
+app.post("/createPost",async (req,res) => {
+
+    let input = req.body
+
+    // collect token and store in a variable
+    let token = req.headers.token
+
+    //verify token
+     
+    jwt.verify(token,"blogApp", async (error,decoded) => {
+
+        if ( decoded ) {
+
+            let result = new postModel(input)
+            await result.save()
+            res.json({"Status":"Post Created Successfully"})
+            
+        } else {
+
+            res.json({"Status":"Invalid Authentication"})
+            
+        }
+    })
 })
 
 app.listen(4000,() => {
