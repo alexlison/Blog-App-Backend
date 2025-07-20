@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const userModel = require("./models/users")
 
+
 const app = express()
 
 app.use(express.json())
@@ -46,11 +47,57 @@ app.post("/signup", async (req,res) => {
 
             console.log(error)
 
-        }
-     )
-
+        })
 })
 
+
+app.post("/signIn",async (req,res) => {
+
+    let input = req.body
+    userModel.find({email:input.email}).then(
+        (result) => {
+
+            if (result.length > 0) {
+
+                let passwordValidator = bcrypt.compareSync(input.password,result[0].password)
+
+                if (passwordValidator) 
+                {
+                    jwt.sign({email:input.email},"blogApp",{expiresIn:"1d"},
+                        (error,token) => {
+
+                            if (error) {
+
+                                res.json({"Status":"error","errorMsg":error})
+                                
+                            } else {
+
+                                res.json({"Status":"success","token":token,"userId":result[0]._id})
+                                
+                            }
+                            
+                            
+                        })
+
+
+                    
+                } else {
+
+                    res.json({"Status":"InCorrect password"})
+                    
+                }
+                
+               
+            } else {
+
+                res.json({"Status":"Invalid Email id"})
+                
+            }
+        }
+    ).catch()
+
+
+})
 
 app.listen(4000,() => {
 
