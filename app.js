@@ -121,6 +121,34 @@ app.post("/createPost",async (req,res) => {
     })
 })
 
+app.post("/viewAll",(req,res) => {
+
+    let token = req.headers.token
+    
+    jwt.verify(token,"blogApp",(error,decoded) => {
+
+        if (decoded) {
+
+            postModel.find().then(
+                (items) => {
+
+                    res.json(items)
+                }
+            ).catch(
+                () => {
+                    res.json({"Status":"Error"})
+                } 
+            )
+
+            
+        } else {
+            res.json({"Status":"Invalid Authentication"})
+        }
+    })
+
+})
+
+
 app.listen(4000,() => {
 
     console.log("server is running at port localhost:4000 ");
