@@ -73,7 +73,7 @@ app.post("/signIn",async (req,res) => {
                                 
                             } else {
 
-                                res.json({"Status":"success","token":token,"userId":result[0]._id})
+                                res.json({"Status":"success","token":token,"userId":result[0]._id ,"name": result[0].name })
                                 
                             }
                             
@@ -129,7 +129,7 @@ app.post("/viewAll",(req,res) => {
 
         if (decoded) {
 
-            postModel.find().then(
+            postModel.find().populate("userId", "name").then(
                 (items) => {
 
                     res.json(items)
