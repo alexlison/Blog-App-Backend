@@ -14,7 +14,6 @@ app.use(cors())
 app.use(express.urlencoded({extended:true}))
 
 
-mongoose.connect("mongodb+srv://alexlison:alexlison6885@cluster0.bz3d6.mongodb.net/blogDb?retryWrites=true&w=majority&appName=Cluster0")
 
 app.post("/signup", async (req,res) => {
 
